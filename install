@@ -9,6 +9,7 @@ if hash ruby 2>/dev/null; then
     mkdir $HOME/.enote
     mkdir $HOME/.enote/notes
     cp config_default $HOME/.enote/config
+    chmod +x uninstall enote
   fi
 else
   echo -e "${red}Ruby is required but it's not installed. Please install Ruby and then try again. Aborting."
