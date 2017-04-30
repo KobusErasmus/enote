@@ -1,0 +1,28 @@
+#!/bin/bash
+
+green="\033[0;32m"
+red="\033[0;31m"
+white="\033[0m"
+
+if [ -d "$HOME/.enote" ]; then
+  rm -r $HOME/.enote
+  echo "Removed $HOME/.enote directory"
+fi
+
+path="export PATH=\$PATH:$(pwd)"
+path2="${path//\//\\\/}"
+if [ -f $HOME/.bashrc ]; then
+  if grep -Fxq "$path" $HOME/.bashrc; then
+    sed -i -e "/$path2/d" $HOME/.bashrc
+    echo -e "Removed current directory from ~/.bashrc"
+  fi
+fi
+
+if [ -f $HOME/.zshrc ]; then
+  if grep -Fxq "$path" $HOME/.zshrc; then
+    sed -i -e "/$path2/d" $HOME/.zshrc
+    echo -e "Removed current directory from ~/.zshrc"
+  fi
+fi
+
+echo -e "${green}ENote uninstalled successfully"

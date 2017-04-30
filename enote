@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'thor'
+
+class ENote < Thor
+  no_commands {
+    def dir
+      "#{Dir.home}/.enote"
+    end
+
+    def notes_dir
+      "#{self.dir}/notes"
+    end
+
+    def conf
+      "#{self.dir}/config"
+    end
+
+    def defalut_editor
+      File.read(self.conf)[/(?<=editor=)(.*)/]
+    end
+
+    def has_notes
+      !Dir["#{self.notes_dir}/*"].entries.empty?
+    end
+  }
+
+  desc "list|l", "list all notes"
+  def list
+    if self.has_notes
+      system("ls #{self.notes_dir}")
+    else
+      puts "No notes created yet"
+    end
+  end
+
+  desc "edit|e NOTE", "edit or create new note called NOTE"
+  def edit(name)
+    system("#{self.defalut_editor} #{self.notes_dir}/#{name}")
+  end
+
+  desc "remove|r NOTE", "remove note called NOTE"
+  def remove(name)
+    path = "#{self.notes_dir}/#{name}"
+    if File.exists? path 
+      system("rm #{path}")
+      puts "\033[0;31mRemoved note #{name}\033[0m"
+    end
+  end
+
+  desc "set_editor|s VALUE", "set default editor to VALUE (e.g. vim)"
+  def set_editor(editor)
+    text = File.read(self.conf).gsub(/editor=.*/,"editor=#{editor}")
+    File.open(self.conf, "w") {|f| f.puts text }
+    puts "\033[0;32mEditor changed to #{editor}\033[0m"
+  end
+end
+
+if Dir.exists? "#{Dir.home}/.enote"
+  ENote.start
+else
+  puts "\033[0;31mENote is not installed for current user. Install by running './install'"
+end

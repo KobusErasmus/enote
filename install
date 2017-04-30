@@ -1,0 +1,50 @@
+#!/bin/bash
+
+green="\033[0;32m"
+red="\033[0;31m"
+white="\033[0m"
+
+if hash ruby 2>/dev/null; then
+  if [ ! -d "$HOME/.enote" ]; then
+    mkdir $HOME/.enote
+    mkdir $HOME/.enote/notes
+    cp config_default $HOME/.enote/config
+  fi
+else
+  echo -e "${red}Ruby is required but it's not installed. Please install Ruby and then try again. Aborting."
+  exit 1
+fi
+
+editor=""
+while [ ! -n "$editor" ]
+do
+  read -p "Enter name of default text editor (e.g. 'vim', 'nano', etc.):" ans
+  if [ ! -n "$ans" ]; then
+    echo -e "${red}Enter a value.\033[0m"
+  else
+    if ! hash $ans 2>/dev/null; then
+      echo -e "${red}Application called '$ans' not installed.${white}"
+      editor=""
+    else
+      editor=$ans
+      ./enote set_editor $editor
+    fi
+  fi
+done
+
+path="export PATH=\$PATH:$(pwd)"
+if [ -f $HOME/.bashrc ]; then
+  if ! grep -Fxq "$path" "$HOME/.bashrc"; then
+    echo "$path" >> $HOME/.bashrc
+    echo -e "Added current directory to ~/.bashrc"
+  fi
+fi
+
+if [ -f $HOME/.zshrc ]; then
+  if ! grep -Fxq "$path" "$HOME/.zshrc"; then
+    echo "$path" >> $HOME/.zshrc
+    echo -e "Added current directory to ~/.zshrc"
+  fi
+fi
+
+echo -e "${green}ENote installed successfully. Open a NEW terminal window to run ENote."
