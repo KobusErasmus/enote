@@ -1,0 +1,9 @@
+complete -F enote_options enote
+function enote_options()
+{
+  if [ -z $2 ] ; then
+    COMPREPLY=(`ls $HOME/.enote/notes`)
+  else
+    COMPREPLY=(`ls $HOME/.enote/notes | grep $2`)
+  fi  
+}

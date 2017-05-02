@@ -14,6 +14,7 @@ path2="${path//\//\\\/}"
 if [ -f $HOME/.bashrc ]; then
   if grep -Fxq "$path" $HOME/.bashrc; then
     sed -i -e "/$path2/d" $HOME/.bashrc
+    sed -i -e "/source \$HOME\\/git_repositories\\/enote\\/bash_source/d" $HOME/.bashrc
     echo -e "Removed current directory from ~/.bashrc"
   fi
 fi
@@ -21,6 +22,9 @@ fi
 if [ -f $HOME/.zshrc ]; then
   if grep -Fxq "$path" $HOME/.zshrc; then
     sed -i -e "/$path2/d" $HOME/.zshrc
+    sed -i -e "/fpath=(\$HOME\\/git_repositories\\/enote \$fpath)/d" $HOME/.zshrc
+    sed -i -e "/autoload _zsh_completion/d" $HOME/.zshrc
+    sed -i -e "/compdef _zsh_completion enote/d" $HOME/.zshrc
     echo -e "Removed current directory from ~/.zshrc"
   fi
 fi
