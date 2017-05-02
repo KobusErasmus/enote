@@ -9,12 +9,14 @@ if [ -d "$HOME/.enote" ]; then
   echo "Removed $HOME/.enote directory"
 fi
 
-path="export PATH=\$PATH:$(pwd)"
+wd="$(pwd)"
+path="export PATH=\$PATH:$wd"
 path2="${path//\//\\\/}"
+path3="${wd//\//\\\/}"
 if [ -f $HOME/.bashrc ]; then
   if grep -Fxq "$path" $HOME/.bashrc; then
     sed -i -e "/$path2/d" $HOME/.bashrc
-    sed -i -e "/source \$HOME\\/git_repositories\\/enote\\/bash_source/d" $HOME/.bashrc
+    sed -i -e "/source $path3\\/bash_source/d" $HOME/.bashrc
     echo -e "Removed current directory from ~/.bashrc"
   fi
 fi
@@ -22,7 +24,7 @@ fi
 if [ -f $HOME/.zshrc ]; then
   if grep -Fxq "$path" $HOME/.zshrc; then
     sed -i -e "/$path2/d" $HOME/.zshrc
-    sed -i -e "/fpath=(\$HOME\\/git_repositories\\/enote \$fpath)/d" $HOME/.zshrc
+    sed -i -e "/fpath=($path3 \$fpath)/d" $HOME/.zshrc
     sed -i -e "/autoload _zsh_completion/d" $HOME/.zshrc
     sed -i -e "/compdef _zsh_completion enote/d" $HOME/.zshrc
     echo -e "Removed current directory from ~/.zshrc"

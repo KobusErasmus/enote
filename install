@@ -36,16 +36,16 @@ done
 path="export PATH=\$PATH:$(pwd)"
 if [ -f $HOME/.bashrc ]; then
   if ! grep -Fxq "$path" "$HOME/.bashrc"; then
-    echo "$path" >> $HOME/.bashrc
-    echo "source \$HOME/git_repositories/enote/bash_source" >> $HOME/.bashrc
+    echo -e "\n$path" >> $HOME/.bashrc
+    echo "source $(pwd)/bash_source" >> $HOME/.bashrc
     echo -e "Added current directory to ~/.bashrc"
   fi
 fi
 
 if [ -f $HOME/.zshrc ]; then
   if ! grep -Fxq "$path" "$HOME/.zshrc"; then
-    echo "$path" >> $HOME/.zshrc
-    echo "fpath=(\$HOME/git_repositories/enote \$fpath)" >> $HOME/.zshrc
+    echo -e "\n$path" >> $HOME/.zshrc
+    echo "fpath=($(pwd) \$fpath)" >> $HOME/.zshrc
     echo "autoload _zsh_completion" >> $HOME/.zshrc
     echo "compdef _zsh_completion enote" >> $HOME/.zshrc
     echo -e "Added current directory to ~/.zshrc"
