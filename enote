@@ -1,64 +1,53 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'thor'
+require 'optparse'
 
-class ENote < Thor
-  no_commands {
-    def dir
-      "#{Dir.home}/.enote"
-    end
+@dir = "#{Dir.home}/.enote"
+@notes_dir = "#{@dir}/notes"
+@conf = "#{@dir}/config"
+@defalut_editor = File.read(@conf)[/(?<=editor=)(.*)/]
 
-    def notes_dir
-      "#{self.dir}/notes"
-    end
+def has_notes
+   !Dir["#{@notes_dir}/*"].entries.empty?
+end
 
-    def conf
-      "#{self.dir}/config"
-    end
-
-    def defalut_editor
-      File.read(self.conf)[/(?<=editor=)(.*)/]
-    end
-
-    def has_notes
-      !Dir["#{self.notes_dir}/*"].entries.empty?
-    end
-  }
-
-  desc "list|l", "list all notes"
-  def list
-    if self.has_notes
-      system("ls #{self.notes_dir}")
-    else
-      puts "No notes created yet"
-    end
-  end
-
-  desc "edit|e NOTE", "edit or create new note called NOTE"
-  def edit(name)
-    system("#{self.defalut_editor} #{self.notes_dir}/#{name}")
-  end
-
-  desc "remove|r NOTE", "remove note called NOTE"
-  def remove(name)
-    path = "#{self.notes_dir}/#{name}"
-    if File.exists? path 
-      system("rm #{path}")
-      puts "\033[0;31mRemoved note #{name}\033[0m"
-    end
-  end
-
-  desc "set_editor|s VALUE", "set default editor to VALUE (e.g. vim)"
-  def set_editor(editor)
-    text = File.read(self.conf).gsub(/editor=.*/,"editor=#{editor}")
-    File.open(self.conf, "w") {|f| f.puts text }
-    puts "\033[0;32mEditor changed to #{editor}\033[0m"
+def list
+  if has_notes
+    system("ls #{@notes_dir}")
+  else
+    puts "No notes created yet"
   end
 end
 
-if Dir.exists? "#{Dir.home}/.enote"
-  ENote.start
+def edit(name)
+  system("#{@defalut_editor} #{@notes_dir}/#{name}")
+end
+
+def remove(name)
+  path = "#{@notes_dir}/#{name}"
+  if File.exists? path
+    system("rm #{path}")
+    puts "\033[0;31mRemoved note #{name}\033[0m"
+  end
+end
+
+def set_editor(editor)
+  text = File.read(@conf).gsub(/editor=.*/,"editor=#{editor}")
+  File.open(@conf, "w") {|f| f.puts text }
+  puts "\033[0;32mEditor changed to #{editor}\033[0m"
+end
+
+op = OptionParser.new
+op.banner = "Usage: enote [option]...[note]..."
+op.on("-l", "--list", "list all notes") {list}
+op.on("-e", "--edit NOTE", "edit or create new note called NOTE") {|n| edit n}
+op.on("-r", "--remove NOTE", "remove note called NOTE") {|n| remove n}
+op.on("-s", "--set-editor VALUE", "set default editor to VALUE (e.g. vim)") {|v| set_editor v}
+op.on("-h", "--help", "Prints this help") {puts op; exit}
+
+if Dir.exists? @dir
+  ARGV << '-h' if ARGV.empty?
+  (ARGV[0][0] != "-") ? (edit ARGV[0]) : op.parse!
 else
   puts "\033[0;31mENote is not installed for current user. Install by running './install'"
 end

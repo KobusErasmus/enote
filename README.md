@@ -15,31 +15,19 @@ enote
 ```
 To add/edit a note called "MyNote", type:
 ```
-enote edit MyNote
-```
-or:
-```
-enote e MyNote
+enote MyNote
 ```
 To list all your notes, type:
 ```
-enote list
-```
-or:
-```
-enote l
+enote -l
 ```
 To remove a note called "MyNote", type:
 ```
-enote remove MyNote
+enote -r MyNote
 ```
 To change default text editor to, for example, nano, type:
 ```
-enote set_editor nano
-```
-or:
-```
-enote s nano
+enote -s nano
 ```
 
 # Uninstall
