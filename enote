@@ -1,11 +1,15 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'English'
 
+@green = "\033[0;32m"
+@red = "\033[0;31m"
+@white = "\033[0m"
 @dir = "#{Dir.home}/.enote"
 @notes_dir = "#{@dir}/notes"
 @conf = "#{@dir}/config"
-@defalut_editor = File.read(@conf)[/(?<=editor=)(.*)/]
+@default_editor = File.read(@conf)[/(?<=editor=)(.*)/]
 
 def has_notes
    !Dir["#{@notes_dir}/*"].entries.empty?
@@ -20,25 +24,32 @@ def list
 end
 
 def edit(name)
-  system("#{@defalut_editor} #{@notes_dir}/#{name}")
+  cmd = "#{@default_editor} #{@notes_dir}/#{name}"
+  system(cmd)
+  unless $CHILD_STATUS.exitstatus == 0
+    puts "#{@red}An error occurred when running: #{cmd}. Is #{@default_editor} installed?#{@white}"
+    exit 1
+  end
 end
 
 def remove(name)
   path = "#{@notes_dir}/#{name}"
   if File.exists? path
     system("rm #{path}")
-    puts "\033[0;31mRemoved note #{name}\033[0m"
+    puts "#{@green}Removed note #{name}#{@white}"
   end
 end
 
 def set_editor(editor)
   text = File.read(@conf).gsub(/editor=.*/,"editor=#{editor}")
   File.open(@conf, "w") {|f| f.puts text }
-  puts "\033[0;32mEditor changed to #{editor}\033[0m"
+  puts "#{@green}Editor changed to #{editor}#{@white}"
 end
 
 op = OptionParser.new
-op.banner = "Usage: enote [option]...[note]..."
+op.banner = "Manage notes in favourite command line text editor.
+
+Usage: #{File.basename($PROGRAM_NAME)} [option]...[note]..."
 op.on("-l", "--list", "list all notes") {list}
 op.on("-e", "--edit NOTE", "edit or create new note called NOTE") {|n| edit n}
 op.on("-r", "--remove NOTE", "remove note called NOTE") {|n| remove n}
@@ -46,8 +57,15 @@ op.on("-s", "--set-editor VALUE", "set default editor to VALUE (e.g. vim)") {|v|
 op.on("-h", "--help", "Prints this help") {puts op; exit}
 
 if Dir.exists? @dir
-  ARGV << '-h' if ARGV.empty?
-  (ARGV[0][0] != "-") ? (edit ARGV[0]) : op.parse!
+  begin
+    ARGV << '-h' if ARGV.empty?
+    (ARGV[0][0] != "-") ? (edit ARGV[0]) : op.parse!
+  rescue OptionParser::MissingArgument => e
+    puts "#{@red}An error occurred: #{e.message}.#{@white}"
+    puts
+    puts op
+    exit 2
+  end
 else
-  puts "\033[0;31mENote is not installed for current user. Install by running './install'\033[0m"
+  puts "#{@red}ENote is not installed for current user. Install by running './install'#{@white}"
 end
