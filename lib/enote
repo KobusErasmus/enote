@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "English"
+require "#{__dir__}/variables.rb"
+require "#{__dir__}/methods.rb"
+require "#{__dir__}/option_parser.rb"
+
+start_enote

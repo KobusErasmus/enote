@@ -9,7 +9,7 @@ if [ -d "$HOME/.enote" ]; then
   echo "Removed $HOME/.enote directory"
 fi
 
-wd="$(pwd)"
+wd="$(pwd)/lib"
 path="export PATH=\$PATH:$wd"
 path2="${path//\//\\\/}"
 path3="${wd//\//\\\/}"
