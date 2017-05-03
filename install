@@ -12,7 +12,7 @@ if hash ruby 2>/dev/null; then
     chmod +x uninstall enote
   fi
 else
-  echo -e "${red}Ruby is required but it's not installed. Please install Ruby and then try again. Aborting."
+  echo -e "${red}Ruby is required but it's not installed. Please install Ruby and then try again. Aborting.${white}"
   exit 1
 fi
 
@@ -52,4 +52,4 @@ if [ -f $HOME/.zshrc ]; then
   fi
 fi
 
-echo -e "${green}ENote installed successfully. Open a NEW terminal window to run ENote."
+echo -e "${green}ENote installed successfully. Open a NEW terminal window to run ENote.${white}"

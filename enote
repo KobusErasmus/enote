@@ -49,5 +49,5 @@ if Dir.exists? @dir
   ARGV << '-h' if ARGV.empty?
   (ARGV[0][0] != "-") ? (edit ARGV[0]) : op.parse!
 else
-  puts "\033[0;31mENote is not installed for current user. Install by running './install'"
+  puts "\033[0;31mENote is not installed for current user. Install by running './install'\033[0m"
 end
