@@ -25,9 +25,9 @@ To remove a note called "MyNote", type:
 ```
 enote -r MyNote
 ```
-To change default text editor to, for example, nano, type:
+To change default text editor to, for example, vim, type:
 ```
-enote -s nano
+enote --set-editor vim
 ```
 
 # Uninstall
