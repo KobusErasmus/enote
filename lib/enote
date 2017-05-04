@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require "yaml"
 require "optparse"
 require "English"
 require "#{__dir__}/variables.rb"

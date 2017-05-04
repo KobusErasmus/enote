@@ -28,13 +28,22 @@ def remove(name)
 end
 
 def set_editor(editor)
-  text = File.read(@conf).gsub(/editor=.*/,"editor=#{editor}")
-  File.open(@conf, "w") {|f| f.puts text }
+  @conf["editor"] = editor
+  @default_editor = editor
+  File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
   puts "#{@green}Editor changed to #{editor}#{@white}"
 end
 
+def set_notes_dir(dir)
+  @conf["notes_dir"] = dir
+  @notes_dir = dir
+  File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
+  Dir.mkdir dir if !Dir.exists? dir
+  puts "#{@green}Notes directory set to #{dir}#{@white}"
+end
+
 def start_enote
-  if Dir.exists? @dir
+  if File.exists? @conf_file
     begin
       ARGV << '-h' if ARGV.empty?
       (ARGV[0][0] != "-") ? (edit ARGV[0]) : @op.parse!

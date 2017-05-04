@@ -1,2 +1,2 @@
 #compdef enote
-compadd `ls $HOME/.enote/notes` 
+compadd `ls $HOME/enotes`

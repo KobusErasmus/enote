@@ -6,13 +6,14 @@ white="\033[0m"
 
 if [ -d "$HOME/.enote" ]; then
   rm -r $HOME/.enote
-  echo "Removed $HOME/.enote directory"
+  echo "Removed configuration directory"
 fi
 
 wd="$(pwd)/lib"
 path="export PATH=\$PATH:$wd"
 path2="${path//\//\\\/}"
-path3="${wd//\//\\\/}"
+enote_dir="\$HOME/.enote"
+path3="${enote_dir//\//\\\/}"
 if [ -f $HOME/.bashrc ]; then
   if grep -Fxq "$path" $HOME/.bashrc; then
     sed -i -e "/$path2/d" $HOME/.bashrc
