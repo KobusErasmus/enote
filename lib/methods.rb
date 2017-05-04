@@ -27,6 +27,27 @@ def remove(name)
   end
 end
 
+def tag_note
+  @arguments.delete("-t")
+  if @arguments.size < 2
+    puts "#{@red}Enter at least two arguments#{@white}"
+    puts @op
+    exit 1
+  end
+  note = @arguments.shift
+  if File.exists? "#{@notes_dir}/#{note}"
+    @arguments.each do |tag|
+      tags = (@conf["#{note}"] ||= [])
+      tags << tag if !tags.include? tag
+    end
+    File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
+    puts "#{@green}Tagged #{note} as #{@arguments.join(", ")}#{@white}"
+  else
+    puts "#{@red}Note '#{note}' does not exist#{@white}"
+    exit 1
+  end
+end
+
 def set_editor(editor)
   @conf["editor"] = editor
   @default_editor = editor
@@ -46,7 +67,9 @@ def start_enote
   if File.exists? @conf_file
     begin
       ARGV << '-h' if ARGV.empty?
+      @arguments += ARGV
       (ARGV[0][0] != "-") ? (edit ARGV[0]) : @op.parse!
+      tag_note if @arguments[0] == "-t"
     rescue OptionParser::MissingArgument => e
       puts "#{@red}An error occurred: #{e.message}.#{@white}"
       puts
