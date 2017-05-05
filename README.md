@@ -25,6 +25,14 @@ To remove a note called "MyNote", type:
 ```
 enote -r MyNote
 ```
+To add the tags MyFirstTag and tag1 to note MyNote, type:
+```
+enote -t MyNote MyFirstTag tag1
+```
+To remove the tags MyFirstTag and tag1 from note MyNote, type:
+```
+enote -u MyNote MyFirstTag tag1
+```
 To change default text editor to, for example, vim, type:
 ```
 enote --set-editor vim
