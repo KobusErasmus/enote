@@ -4,7 +4,14 @@ end
 
 def list
   if has_notes
-    system("ls #{@notes_dir}")
+    `ls #{@notes_dir}`.split("\n").each do |note|
+      note_tags = @tags["#{note}"]
+      if note_tags.nil? || note_tags.empty?
+        puts "#{note}"
+      else
+        puts "#{note} (tags: #{note_tags.join(", ")})"
+      end
+    end
   else
     puts "No notes created yet"
   end
@@ -23,12 +30,15 @@ def remove(name)
   path = "#{@notes_dir}/#{name}"
   if File.exists? path
     system("rm #{path}")
+    @tags.delete_if {|k,v| k == name || k == "#{name}"}
+    write_conf
     puts "#{@green}Removed note #{name}#{@white}"
   end
 end
 
 def tag_note
-  @arguments.delete("-t")
+  tagging = (@arguments[0] == "-t")
+  @arguments -= ["-t", "-u"]
   if @arguments.size < 2
     puts "#{@red}Enter at least two arguments#{@white}"
     puts @op
@@ -37,28 +47,38 @@ def tag_note
   note = @arguments.shift
   if File.exists? "#{@notes_dir}/#{note}"
     @arguments.each do |tag|
-      tags = (@conf["#{note}"] ||= [])
-      tags << tag if !tags.include? tag
+      note_tags = (@tags["#{note}"] ||= [])
+      has_tag = (note_tags.include? tag)
+      note_tags << tag if (!has_tag && tagging)
+      note_tags.delete(tag) if (has_tag && !tagging)
     end
-    File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
-    puts "#{@green}Tagged #{note} as #{@arguments.join(", ")}#{@white}"
+    write_conf
+    if tagging
+      puts "#{@green}Tagged #{note} as #{@arguments.join(", ")}#{@white}"
+    else
+      puts "#{@green}Removed tags #{@arguments.join(", ")} from #{note}#{@white}"
+    end
   else
     puts "#{@red}Note '#{note}' does not exist#{@white}"
     exit 1
   end
 end
 
+def write_conf
+  File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
+end
+
 def set_editor(editor)
   @conf["editor"] = editor
   @default_editor = editor
-  File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
+  write_conf
   puts "#{@green}Editor changed to #{editor}#{@white}"
 end
 
 def set_notes_dir(dir)
   @conf["notes_dir"] = dir
   @notes_dir = dir
-  File.open(@conf_file, "w") {|f| YAML.dump(@conf, f) }
+  write_conf
   Dir.mkdir dir if !Dir.exists? dir
   puts "#{@green}Notes directory set to #{dir}#{@white}"
 end
@@ -69,7 +89,7 @@ def start_enote
       ARGV << '-h' if ARGV.empty?
       @arguments += ARGV
       (ARGV[0][0] != "-") ? (edit ARGV[0]) : @op.parse!
-      tag_note if @arguments[0] == "-t"
+      tag_note if (@arguments[0] == "-t" || @arguments[0] == "-u")
     rescue OptionParser::MissingArgument => e
       puts "#{@red}An error occurred: #{e.message}.#{@white}"
       puts

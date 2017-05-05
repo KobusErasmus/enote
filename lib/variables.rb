@@ -7,4 +7,5 @@
 @conf = YAML.load_file(@conf_file)
 @notes_dir = @conf["notes_dir"]
 @default_editor = @conf["editor"]
+@tags = (@conf["tags"] ||= {})
 @arguments =[]
