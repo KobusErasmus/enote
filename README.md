@@ -21,6 +21,10 @@ To list all your notes, type:
 ```
 enote -l
 ```
+To list all your notes that have the tag, say, "MyFirstTag", type:
+```
+enote -l MyFirstTag
+```
 To remove a note called "MyNote", type:
 ```
 enote -r MyNote

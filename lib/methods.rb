@@ -4,7 +4,8 @@ end
 
 def list
   if has_notes
-    `ls #{@notes_dir}`.split("\n").each do |note|
+    notes = `ls #{@notes_dir}`.split("\n").select {|n| (ARGV - (@tags["#{n}"]||=[])).empty?}
+    notes.each do |note|
       note_tags = @tags["#{note}"]
       if note_tags.nil? || note_tags.empty?
         puts "#{note}"
