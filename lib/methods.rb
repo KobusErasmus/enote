@@ -27,6 +27,27 @@ def edit(name)
   end
 end
 
+def rename
+  @arguments -= ["-r", "--rename"]
+  note = @arguments[0]
+  new_note = @arguments[1]
+  if @arguments.size < 2
+    puts "#{@red}Enter at least two arguments#{@white}"
+    puts @op
+    exit 1
+  end
+  cmd = "mv #{@notes_dir}/#{note} #{@notes_dir}/#{new_note}"
+  system(cmd)
+  unless $CHILD_STATUS.exitstatus == 0
+    puts "#{@red}An error occurred when running: #{cmd}."
+    exit 1
+  end
+  @tags["#{new_note}"] = @tags["#{note}"]
+  @tags.delete("#{note}")
+  write_conf
+  puts "#{@green}#{note} renamed to #{new_note}#{@white}"
+end
+
 def remove(name)
   path = "#{@notes_dir}/#{name}"
   if File.exists? path
@@ -38,8 +59,8 @@ def remove(name)
 end
 
 def tag_note
-  tagging = (@arguments[0] == "-t")
-  @arguments -= ["-t", "-u"]
+  tagging = (@arguments[0].include?("-t"))
+  @arguments -= ["-t", "--tag", "-u", "--untag"]
   if @arguments.size < 2
     puts "#{@red}Enter at least two arguments#{@white}"
     puts @op
@@ -90,7 +111,8 @@ def start_enote
       ARGV << '-h' if ARGV.empty?
       @arguments += ARGV
       (ARGV[0][0] != "-") ? (edit ARGV[0]) : @op.parse!
-      tag_note if (@arguments[0] == "-t" || @arguments[0] == "-u")
+      tag_note if (@arguments[0].include?("-t") || @arguments[0].include?("-u"))
+      rename if (@arguments[0].include?("-r"))
     rescue OptionParser::MissingArgument => e
       puts "#{@red}An error occurred: #{e.message}.#{@white}"
       puts
