@@ -25,9 +25,13 @@ To list all your notes that have the tag, say, "MyFirstTag", type:
 ```
 enote -l MyFirstTag
 ```
+To rename a note called "MyNote" to "my-note", type:
+```
+enote -r MyNote my-note
+```
 To remove a note called "MyNote", type:
 ```
-enote -r MyNote
+enote -d MyNote
 ```
 To add the tags MyFirstTag and tag1 to note MyNote, type:
 ```
