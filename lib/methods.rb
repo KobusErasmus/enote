@@ -59,7 +59,8 @@ def remove(name)
 end
 
 def tag_note
-  tagging = (@arguments[0].include?("-t"))
+  f = @arguments[0]
+  tagging = (f == "-t" || f == "--tag")
   @arguments -= ["-t", "--tag", "-u", "--untag"]
   if @arguments.size < 2
     puts "#{@red}Enter at least two arguments#{@white}"
@@ -111,8 +112,12 @@ def start_enote
       ARGV << '-h' if ARGV.empty?
       @arguments += ARGV
       (ARGV[0][0] != "-") ? (edit ARGV[0]) : @op.parse!
-      tag_note if (@arguments[0].include?("-t") || @arguments[0].include?("-u"))
-      rename if (@arguments[0].include?("-r"))
+      f = @arguments[0]
+      if f == "-t" || f == "-u" || f == "--tag" || f == "--untag"
+        tag_note
+      elsif f == "-r" || f == "--rename"
+        rename
+      end
     rescue OptionParser::MissingArgument => e
       puts "#{@red}An error occurred: #{e.message}.#{@white}"
       puts
