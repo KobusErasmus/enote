@@ -5,7 +5,7 @@
 @enote_dir = "#{Dir.home}/.enote"
 @conf_file = "#{@enote_dir}/enote_config"
 @conf = YAML.load_file(@conf_file)
-@notes_dir = @conf["notes_dir"]
-@default_editor = @conf["editor"]
-@tags = (@conf["tags"] ||= {})
-@arguments =[]
+@notes_dir = @conf['notes_dir']
+@default_editor = @conf['editor']
+@tags = (@conf['tags'] ||= {})
+@arguments = []

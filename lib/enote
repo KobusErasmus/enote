@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require "yaml"
-require "optparse"
-require "English"
+require 'yaml'
+require 'optparse'
+require 'English'
 require "#{__dir__}/variables.rb"
 require "#{__dir__}/methods.rb"
 require "#{__dir__}/option_parser.rb"
