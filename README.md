@@ -53,4 +53,4 @@ To uninstall ENote, open your termianl, cd into the cloned directory, and type t
 ```
 
 # About Author
-Dr Jacobus Erasmus is a philosopher and programmer. For more information, see (www.JacobusErasmus.com).
+See (www.JacobusErasmus.com).
